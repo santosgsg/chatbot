@@ -6,7 +6,7 @@ import os
 from app.mensagens import Mensagem
 
 
-class driver:
+class Driver:
     def __init__(self):
         self.webdriver = webdriver.Chrome(chrome_options=self.configure())
 
@@ -36,6 +36,12 @@ class driver:
                 chat.click()
                 time.sleep(1)
                 self.webdriver.find_element_by_class_name('_3u328').send_keys(
-                    Mensagem.welcome('Clinica  médica Getulio Vargas'))
+                    Mensagem.welcome('Clinica médica Getulio Vargas'))
 
-        pass
+    def get_numbers(self):
+        notifications = []
+        for element in self.webdriver.find_elements_by_class_name('X7YrQ'):
+            if element.find_elements_by_class_name('P6z4j'):
+                notifications.append(element.find_element_by_class_name('_19RFN').text)
+
+        return notifications
