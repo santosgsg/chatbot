@@ -1,17 +1,21 @@
 import threading
 
-from flask import Flask
+from flask import Flask, render_template, url_for
 from flask import request
 import json
-from app.controller import Account
+
+from werkzeug.utils import redirect
+
+from app.controller import Account  # , Academia
+from templates import Template
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/chatbot')
 def index():
     acc = Account()
     img = acc.autenticar()
-    t = threading.Thread(name='Check', target=acc.identify_new_message)
+    t = threading.Thread(name='Check', target=acc.chat_loop)
     t.start()
     print('Thread iniciada')
 
@@ -44,6 +48,112 @@ def post():
     print(json.dumps(data))
     return {'Response': 'sucesso'}
 
+# @app.route('/listar-atividades')
+# def getAtividades():
+#     lista_atividades = Academia().get_atividades()
+#     return render_template('indexView.html', lista=lista_atividades)
+#
+# @app.route('/listar-fichas')
+# def getFichas():
+#     lista_fichas = Academia().get_ficha()
+#     return render_template('indexView.html', lista=lista_fichas)
+#
+# # @app.route('/home')
+# # def getHome():
+# #     return render_template('teste.html')
+#
+# @app.route('/cadastro-equipamento', methods=['GET', 'POST'])
+# def cadastro_equipamento():
+#     if request.method == 'POST':
+#         nome = request.form.get('nome')
+#         obs = request.form.get('observacao')
+#         Academia().set_equipamentos(nome, obs)
+#         return redirect(url_for('listar_equipamentos'))
+#
+#     if request.method == 'GET':
+#         if request.args.get('id'):
+#             print('id')
+#         result = {'method': 'cadastro_equipamento'
+#                   ,'title': 'Cadastrar equipamento'
+#                   , 'group': [{'label': 'Nome'
+#                               , 'placeholder': 'Digite o nome do equipamento'
+#                               , 'name': 'nome'
+#                               , 'value': ''
+#                               , 'required': True},
+#                               {'label': 'Observação'
+#                               , 'placeholder': 'Campo de observação'
+#                               , 'name': 'observacao'
+#                               , 'value': ''
+#                               , 'required': False}]}
+#         return render_template('cadastro.html', element=result)
+#
+# @app.route('/cadastro-forma-pagamento', methods=['GET', 'POST'])
+# def cadastro_forma_pagamento():
+#     if request.method == 'POST':
+#         nome = request.form.get('nome')
+#         if request.args.get('id'):
+#             Academia().update_forma_pagamento(request.args.get('id'), nome)
+#         else:
+#             Academia().set_forma_pagamento(nome)
+#         return redirect(url_for('listar_forma_pagamento'))
+#
+#     if request.method == 'GET':
+#         res = {'Id': '', 'Nome': ''}
+#         if request.args.get('id'):
+#             res = Academia().get_forma_pagamento_by_id(id=request.args.get('id'))
+#         result = {'Id': res['Id']
+#                   ,'method': 'cadastro_forma_pagamento'
+#                   ,'title': 'Cadastrar forma de pagamento'
+#                   , 'group': [{'label': 'Nome'
+#                               , 'placeholder': 'Digite uma nova forma de pagamento'
+#                               , 'name': 'nome'
+#                               , 'value': res['Nome']
+#                               , 'required': True}]}
+#         return render_template('cadastro.html', element=result)
+#
+# @app.route('/listar-forma-pagamento')
+# def listar_forma_pagamento():
+#     result = Academia().get_forma_pagamento()
+#     return render_template('index.html', lista=result)
+#
+# @app.route('/listar-equipamentos')
+# def listar_equipamentos():
+#     result = Academia().get_equipamento()
+#     return render_template('index.html', lista=result)
+#
+# @app.route('/cadastro-forma-pagamento', methods=['GET', 'POST'])
+# def update_forma_pagamento(id):
+#     if request.method == 'POST':
+#         nome = request.form.get('nome')
+#         obs = request.form.get('observacao')
+#         Academia().set_equipamentos(nome, obs)
+#         return redirect(url_for('listar-forma-pagamento'))
+#
+#     if request.method == 'GET':
+#         response = Academia().get_forma_pagamento_by_id(id)
+#         result = {'method': 'cadastro-forma-pagamento/'+id
+#                   , 'title': 'Editar equipamento '+id
+#                   , 'group': [{'label': 'Nome'
+#                               , 'placeholder': 'Digite a forma de pagamento'
+#                               , 'value': response['Nome']
+#                               , 'name': 'nome'
+#                               , 'required': True}]}
+#         return render_template('cadastro.html', element=result)
+#
+# @app.route('/delete_forma_pagamento')
+# def delete_forma_pagamento():
+#     if request.args.get('id'):
+#         id = request.args.get('id')
+#         Academia().delete_forma_pagamento(id)
+#         return redirect(url_for('listar_forma_pagamento'))
+#
+# @app.route('/delete_equipamento')
+# def delete_equipamento():
+#     if request.args.get('id'):
+#         id = request.args.get('id')
+#         Academia().delete_equipamento(id)
+#         return redirect(url_for('listar_equipamentos'))
 
 if __name__ == '__main__':
     app.run(host='127.26.2.98', port=5000)
+
